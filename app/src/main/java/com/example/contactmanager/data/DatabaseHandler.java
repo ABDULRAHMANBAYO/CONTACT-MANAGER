@@ -5,11 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
+import android.util.Log;
 import com.example.contactmanager.R;
 import com.example.contactmanager.model.Contact;
 import com.example.contactmanager.util.Util;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,11 +21,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //Create Table
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //Create table name (id,name and phonenumber)
+        //Create table name (id,name and phone number)
         String CREATE_CONTACT_TABLE = "CREATE TABLE " + Util.TABLE_NAME + "("
-                + Util.KEY_ID + "INTEGER PRIMARY KEY," +
-                Util.KEY_NAME + "TEXT," +
-                Util.KEY_PHONE_NUMBER + "TEXT" + ")";
+                + Util.KEY_ID + " INTEGER PRIMARY KEY," +
+                Util.KEY_NAME + " TEXT," +
+                Util.KEY_PHONE_NUMBER + " TEXT" + ")";
         db.execSQL(CREATE_CONTACT_TABLE);
 
 
@@ -53,7 +52,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         //Insert to row
         db.insert(Util.TABLE_NAME, null, values);
-        db.close();//Close db connectio to avoid memmory leaks
+        Log.d("DBHandler","addContacts: "+"item added");
+        //Close db connection to avoid memory leaks
+        db.close();
 
 
     }
@@ -61,13 +62,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //Get a contact
     public Contact getContact(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor= db.query(Util.TABLE_NAME,new String[]{Util.KEY_ID,Util.KEY_NAME,Util.KEY_PHONE_NUMBER},
-                Util.KEY_ID +"=?",new String[]{String.valueOf(id)},
-                null,null,null);
-        if(cursor != null)
-        {
+        Cursor cursor = db.query(Util.TABLE_NAME,
+                new String[]{Util.KEY_ID, Util.KEY_NAME, Util.KEY_PHONE_NUMBER},
+                Util.KEY_ID +"=?", new String[]{String.valueOf(id)},
+                null, null, null);
+        if (cursor != null)
             cursor.moveToFirst();
-        }
+
 
         Contact contact = new Contact();
         contact.setId(Integer.parseInt(cursor.getString(0)));
@@ -80,17 +81,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
     //Get All Contacts
 
-    public List<Contact> getAllContacts(){
-        List<Contact>contactList= new ArrayList<>();
+    public List<Contact> getAllContacts() {
+        List<Contact> contactList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         //Select all contact
-        String selectAll="SELECT * FROM "+Util.TABLE_NAME;
-        Cursor cursor =db.rawQuery(selectAll,null);
+        String selectAll = "SELECT * FROM " + Util.TABLE_NAME;
+        Cursor cursor = db.rawQuery(selectAll, null);
 
         //Loop through our data
-        if(cursor.moveToFirst())
-        {
-            do{
+        if (cursor.moveToFirst()) {
+            do {
                 Contact contact = new Contact();
                 contact.setId(Integer.parseInt(cursor.getString(0)));
                 contact.setName(cursor.getString(1));
@@ -100,7 +100,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 //Add contact object to list;
                 contactList.add(contact);
             }
-            while(cursor.moveToNext());
+            while (cursor.moveToNext());
 
         }
         return contactList;
