@@ -1,10 +1,12 @@
 package com.example.contactmanager.data;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.contactmanager.R;
+import com.example.contactmanager.model.Contact;
 import com.example.contactmanager.util.Util;
 
 
@@ -33,6 +35,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         //Create a table again
         onCreate(db);
+
+    }
+
+    //Create CRUD
+
+    //Add Contact
+    public void  addContact(Contact contact){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values= new ContentValues();
+        values.put(Util.KEY_NAME,contact.getName());
+        values.put(Util.KEY_PHONE_NUMBER,contact.getPhoneNumber());
+
+        //Insert to row
+        db.insert(Util.TABLE_NAME,null,values);
+        db.close();//Close db connectio to avoid memmory leaks
+
 
     }
 }
