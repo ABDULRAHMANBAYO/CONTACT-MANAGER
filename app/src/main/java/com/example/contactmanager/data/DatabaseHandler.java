@@ -10,6 +10,9 @@ import com.example.contactmanager.R;
 import com.example.contactmanager.model.Contact;
 import com.example.contactmanager.util.Util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class DatabaseHandler extends SQLiteOpenHelper {
     public DatabaseHandler(Context context) {
@@ -74,5 +77,32 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         return contact;
 
+    }
+    //Get All Contacts
+
+    public List<Contact> getAllContacts(){
+        List<Contact>contactList= new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        //Select all contact
+        String selectAll="SELECT * FROM "+Util.TABLE_NAME;
+        Cursor cursor =db.rawQuery(selectAll,null);
+
+        //Loop through our data
+        if(cursor.moveToFirst())
+        {
+            do{
+                Contact contact = new Contact();
+                contact.setId(Integer.parseInt(cursor.getString(0)));
+                contact.setName(cursor.getString(1));
+                contact.setPhoneNumber(cursor.getString(2));
+
+
+                //Add contact object to list;
+                contactList.add(contact);
+            }
+            while(cursor.moveToNext());
+
+        }
+        return contactList;
     }
 }
