@@ -1,6 +1,8 @@
 package com.example.contactmanager;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.contactmanager.adapter.RecyclerViewAdapter;
 import com.example.contactmanager.data.DatabaseHandler;
 import com.example.contactmanager.model.Contact;
 
@@ -16,8 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private ListView contactListView;
-    private ArrayList<String>contactArrayList;
+//    private ListView contactListView;
+    private RecyclerView recyclerView;
+    private RecyclerViewAdapter recyclerViewAdapter;
+    private ArrayList<Contact>contactArrayList;
     private ArrayAdapter<String>arrayAdapter;
 
 
@@ -25,9 +30,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        contactListView= findViewById(R.id.listview);
+        recyclerView=findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         contactArrayList= new ArrayList<>();
         DatabaseHandler db = new DatabaseHandler(MainActivity.this);
+
+
+        //Get All contact
+        List<Contact> contactList = db.getAllContacts();
+
+        for (Contact contact : contactList) {
+            Log.d("MainActivity", "onCreate:" + contact.getName());
+            contactArrayList.add(contact);
+        }
+
+        //Setup adapter
+        recyclerViewAdapter = new RecyclerViewAdapter(MainActivity.this,contactArrayList);
+        recyclerView.setAdapter(recyclerViewAdapter);
+
+//        contactListView= findViewById(R.id.listview);
 
 //        Log.d("Count", "onCreate" + db.getCount());
         //Create contact object
@@ -65,29 +87,23 @@ public class MainActivity extends AppCompatActivity {
 //        db.deleteContact(c);
 
 
-//Get All contact
-        List<Contact> contactList = db.getAllContacts();
 
-        for (Contact contact : contactList) {
-            Log.d("MainActivity", "onCreate:" + contact.getName());
-            contactArrayList.add(contact.getName());
-        }
-        //create array adapter
-        arrayAdapter= new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                contactArrayList
-        );
-        //add to our list view
-       contactListView.setAdapter(arrayAdapter);
-
-       //Attach event to list item
-        contactListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("Onclick","onItemClick:"+contactArrayList.get(position));
-            }
-        });
+//        //create array adapter
+//        arrayAdapter= new ArrayAdapter<>(
+//                this,
+//                android.R.layout.simple_list_item_1,
+//                contactArrayList
+//        );
+//        //add to our list view
+//       contactListView.setAdapter(arrayAdapter);
+//
+//       //Attach event to list item
+//        contactListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Log.d("Onclick","onItemClick:"+contactArrayList.get(position));
+//            }
+//        });
 
     }
 }
