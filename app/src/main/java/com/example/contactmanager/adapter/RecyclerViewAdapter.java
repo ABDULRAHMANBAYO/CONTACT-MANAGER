@@ -1,17 +1,18 @@
 package com.example.contactmanager.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.contactmanager.DetailsActivity;
 import com.example.contactmanager.R;
 import com.example.contactmanager.model.Contact;
 
@@ -71,13 +72,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
             int position = getAdapterPosition();
             Contact contact = contactList.get(position);
-            switch (v.getId()) {
 
-                case R.id.iconButton:
-                    Log.d("IconClicked", "OnClicked" + contact.getPhoneNumber());
-                    break;
+            Intent intent = new Intent(context, DetailsActivity.class);
+            intent.putExtra("name",contact.getName());
+            intent.putExtra("number",contact.getPhoneNumber());
 
-            }
+            context.startActivity(intent);
+//            switch (v.getId()) {
+//
+//                case R.id.iconButton:
+//                    Log.d("IconClicked", "OnClicked" + contact.getPhoneNumber());
+//                    break;
+//
+//            }
             Log.d("Onclick", "OnClicked" + contact.getName());
 
         }
